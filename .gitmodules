@@ -1,0 +1,6 @@
+[submodule "antcc"]
+	path = antcc
+	url = https://github.com/SoftwareAG/sagdevops-antcc.git
+[submodule "scripts"]
+	path = scripts
+	url = https://github.com/lanimall/sagdevops-antcc-scripts.git
