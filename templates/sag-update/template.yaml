@@ -1,0 +1,24 @@
+alias: sag-update
+description: Install fixes
+
+environments:
+  default:
+    release.major:                     10                                                   
+    os.platform:                       lnxamd64   
+    repo.fix:                          ${}
+    nodes:                             ${}
+    products.fixes:                    ${}
+
+layers:
+  runtime:
+    fixRepo:     ${repo.fix}                # install fixes from
+    templates:
+      - updates
+
+templates:
+  updates:
+    fixes: ${products.fixes}
+  
+provision:
+  default:
+    runtime: ${nodes}
