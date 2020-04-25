@@ -60,23 +60,36 @@
 			Current aliases: ${aliases}
 		</echo>
 
-		<iterate target="_register-image-files">
-			<fileset dir="${images.dir}/products" includes="**/*.zip" />
-			<fileset dir="${images.dir}/fixes" includes="**/*.zip" />
-		</iterate>
+        <property name="product_images.dir" value="${images.dir}/products" />
+        <property name="fixes_images.dir" value="${images.dir}/fixes" />
 
+        <antcall target="_register-image-dir">
+            <param name="directory" value="${product_images.dir}"/>
+        </antcall>
 		<echo>
 			Registered product repositories
 		</echo>
 		<cc command="list repository products" format="tsv"/>
-		
+
+        <antcall target="_register-image-dir">
+            <param name="directory" value="${fixes_images.dir}"/>
+        </antcall>
 		<echo>
 			Registered fix repositories
 		</echo>
 		<cc command="list repository fixes" format="tsv"/>
 	</target>
 
+    <target name="_register-image-dir" depends="dir.check" if="dir.exists" >
+        <echo>_register-image-dir directory: ${directory}</echo>
+        <iterate target="_register-image-files">
+			<fileset dir="${directory}" includes="**/*.zip" />
+		</iterate>
+    </target>
+
 	<target name="_register-image-files">
+        <echo>IN _register-image-files</echo>
+
 		<property name="alias" value="${filename}"/>
 		<property name="image_type" value="${dirname}"/>
 		
@@ -95,6 +108,14 @@
 			<waitforjob />
  	    </sequential>
 	</target>
+
+    <target name="dir.check">
+        <condition property="dir.exists">
+            <available file="${directory}" type="dir"/>
+        </condition>
+        <!-- <property name="dir.exists" value="false" /> -->
+        <echo>dir.check: ${dir.exists}</echo>
+    </target>
 
     <!-- Replace string -->
 	<scriptdef language="javascript" name="replace">
