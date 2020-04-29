@@ -75,8 +75,8 @@ templates:
             OSGI-CCE:              
               COMMON-MEMORY:
                 COMMON-MEMORY:
-                  InitSize: '2048'
-                  MaxSize: '4096'
+                  InitSize: '4096'
+                  MaxSize: '8192'
               COMMON-SYSPROPS:
                 COMMON-SYSPROPS:   # CCE system tuneup properties
                   com.softwareag.platform.management.job.thread.pool.size: ${pool.size.jobs}
@@ -100,8 +100,8 @@ templates:
             OSGI-SPM: 
               COMMON-MEMORY:
                 COMMON-MEMORY:
-                  InitSize: '256'
-                  MaxSize: '512'
+                  InitSize: '512'
+                  MaxSize: '1024'
               COMMON-SYSPROPS:
                 COMMON-SYSPROPS:   # SPM system tuneup properties
                   com.softwareag.platform.management.job.timeout: ${timeout.job.seconds}000
