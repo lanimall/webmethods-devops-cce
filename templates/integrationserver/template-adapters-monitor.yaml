@@ -1,0 +1,36 @@
+alias: integrationserver-adapters-monitor
+description: Adapters provisioning on top of IS instance
+
+environments:
+  default:
+    repo.product:                     ${}
+    repo.fix:                         ${}
+    product.fixes:                    ${}
+    nodes:                            ${}
+
+    is.instance.name:                 ${}                 # IS instance name to provision on top
+    is.instance.type:                 integrationServer   # IS instance type: integrationServer(for all versions) or MSC(for 10.3 and lower)
+
+layers:
+  runtime:
+    productRepo: ${repo.product}
+    fixRepo:     ${repo.fix}
+    templates:
+      - adapters
+
+templates:
+  adapters:
+    description: Adapters
+    fixes: ${product.fixes}
+    products:
+      Monitor:
+      jdbcAdapter:
+        OSGI-IS_${is.instance.name}:
+      ${is.instance.type}:
+        ${is.instance.name}: 
+          package.list:       WmMonitor,WmJDBCAdapter  # comma-separated list of packages (DO NOT USE SPACES) 
+          runtimeComponentId: integrationServer-${instance.name}
+
+provision:
+  default:
+    runtime: ${nodes}
