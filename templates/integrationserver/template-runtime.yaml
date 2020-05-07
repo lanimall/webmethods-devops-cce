@@ -1,11 +1,11 @@
-alias: integrationserver-internal-db
+alias: integrationserver-runtime-embedded-db
 description: Software AG Integration Servers with embedded db
 
 environments:
   default:  
     repo.product:                     ${}
     repo.fix:                         ${}
-    product.fixes:                    ${}
+    is.fixes:                         ${}
     nodes:                            ${}
 
     is.key.license.alias:             ${}            
@@ -34,13 +34,13 @@ layers:
     productRepo: ${repo.product}            # install products from
     fixRepo:     ${repo.fix}                # install fixes from
     templates:   
-      - setup
+      - setupruntime
 
 templates:
-  setup:
+  setupruntime:
     licenses:
       "IntegrationServer/config/licenseKey.xml": "${is.key.license.alias}"
-    fixes: ${product.fixes}
+    fixes: ${is.fixes}
     products:
       integrationServer:
         ${is.instance.name}:

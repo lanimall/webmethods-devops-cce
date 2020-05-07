@@ -1,0 +1,47 @@
+alias: mws-configs-update-builtin-users
+description: My webMethods Server Update built-in users
+
+environments:
+  default:
+    # My webMethods Server
+    mws.instance.name:           ${}
+    
+    mws.administrator.user:      "Administrator"
+    mws.administrator.password:  ${}
+    mws.administrator.email:     ${}
+    
+    mws.sysadmin.user:          "SysAdmin"
+    mws.sysadmin.password:      ${}
+
+layers:
+  configs:
+    templates:
+      - builtinusers
+
+templates:
+  builtinusers:
+    description: MWS Builtin Users
+    products:
+      MwsProgramFiles:
+        ${mws.instance.name}:
+          configuration:
+            MwsProgramFiles-${instance.name}:
+              COMMON-LOCAL-USERS:
+                COMMON-LOCAL-USERS-${mws.administrator.user}:
+                  "@id": ${mws.administrator.user}
+                  Enabled: true
+                  FirstName: My webMethods Administrator
+                  LastName:  Administrator
+                  Email:     ${mws.administrator.email}
+                  Password:  ${mws.administrator.password}
+                COMMON-LOCAL-USERS-${mws.sysadmin.user}:
+                  '@id': ${mws.sysadmin.user}
+                  Enabled: true
+                  FirstName: Sys Admin
+                  LastName: ''
+                  Email: ''
+                  Password: '${mws.sysadmin.password}'
+
+provision:
+  default:
+    configs: ${nodes}

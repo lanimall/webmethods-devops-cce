@@ -1,0 +1,76 @@
+alias: stack03-is-setup-centralusers
+description: Software AG Integration Servers setup for central users
+
+environments:
+  default:  
+    nodes:               ${}
+    
+    is.instance.name:    ${}
+
+    # Database connection
+    db.alias:            "MWS"
+    db.type.cce:         SQLSERVER          # REQUIRED: upped case
+    db.host:             ${}                
+    db.port:             ${}                
+    db.name:             ${}                
+    db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
+    db.username:         ${}                
+    db.password:         ${}               
+
+layers:
+  runtime:
+    templates:   
+      - setup
+
+templates:
+  setup:
+    products:
+      integrationServer:
+        ${is.instance.name}:
+          db.type:            ${db.type.cce}
+          db.url:             '${db.url}'
+          db.username:        ${db.username}
+          db.password:        '${db.password}'
+          db.alias:           ${db.alias}
+          runtimeComponentId: integrationServer-${instance.name}
+          configuration:
+            integrationServer-${instance.name}:
+              COMMON-JDBC:
+                COMMON-JDBC-${db.alias}:
+                  Pool:
+                    '@alias': ${db.alias}
+                    Name: ${db.alias}
+                    MinSize: '0'
+                    MaxSize: '10'
+                    MaxIdleTime: '60000'
+                    DatabaseServer:
+                      '@type': ${db.type.cce}
+                      URL: "${db.url}"
+                      User: ${db.username}
+                      Password: '${db.password}'
+                    ExtendedProperties:
+                      Property:
+                      - '@name': AvailConnWarningThreshold
+                        $: '0'
+                      - '@name': WaitingThreadThresholdCount
+                        $: '0'
+                      - '@name': SpyEnabled
+                        $: 'false'
+                      - '@name': SnoopEnabled
+                        $: 'false'
+                      - '@name': SpyParams
+                        $: SpyAttributes=(log=(file)logs/spy/${db.alias}.log;logTName=yes;timestamp=yes)
+                      - '@name': SnoopParams
+                        $: ddtdbg.ProtocolTraceEnable=true;ddtdbg.ProtocolTraceMaxline=16;ddtdbg.ProtocolTraceLocation=logs/snoop/${db.alias}.log;ddtdbg.ProtocolTraceShowTime=true
+              COMMON-DBFUNCTION:
+                COMMON-DBFUNCTION-CentralUsers:
+                  Function:
+                    '@alias': CentralUsers
+                    Description: Central User Management Configuration
+                    PoolAlias: ${db.alias}
+                    FailFastMode: 'false'
+                    CurrentlyInFailFast: 'No'     
+
+provision:
+  default:
+    runtime: ${nodes}

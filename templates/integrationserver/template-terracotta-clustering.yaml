@@ -5,7 +5,7 @@ environments:
   default:  
     repo.product:                     ${}
     repo.fix:                         ${}
-    product.fixes:                    ${}
+    tc.fixes:                         ${}
     nodes:                            ${}
 
     is.key.license.alias:             ${}            
@@ -40,7 +40,7 @@ templates:
   setup:
     licenses:
       "IntegrationServer/config/licenseKey.xml": "${is.key.license.alias}"
-    fixes: ${product.fixes}
+    fixes: ${tc.fixes}
     products:
       integrationServer:
         ${is.instance.name}:

@@ -1,5 +1,5 @@
-alias: database-sqlserver-storage
-description: Database Configurator For MS SQL server Storage creation
+alias: database-sqlserver-mws-core
+description: Installation of the MWS core DB components into MS SQL server
 
 environments:
   default:                 
@@ -13,18 +13,17 @@ environments:
     db.name:             ${}                # webM database name
     db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
 
-    db.admin.username:   ${}                # Admin username for db and user creation
-    db.admin.password:   ${}                # REQUIRED: sa password for webm db and user creation    
     db.username:         ${}                # webM database username
     db.password:         ${}                # webM database password
-    
-    db.fixes:            ${}  
 
-    db.STR.components:
-      - STR
+    db.MWS.components:  
+      - MywebMethodsServer
     
     db.product.scripts:         
       - DatabaseComponentConfigurator
+      - MWScdc
+    
+    db.fixes:            ${}                
 
 layers:
   db:
@@ -32,13 +31,11 @@ layers:
     fixRepo:     ${repo.fix}                # install fixes from
     templates:   dbc
     databases:
-      storage:
-        components:  ${db.STR.components}
+      schemas.MWS:
+        components:  ${db.MWS.components}
         version:     ${db.version}
         db.type:     sqlserver
         db.url:      "${db.url}"
-        db.admin.username: "${db.admin.username}"
-        db.admin.password: "${db.admin.password}"
         db.username: "${db.username}"
         db.password: "${db.password}"
         db.name:     ${db.name}

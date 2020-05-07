@@ -1,8 +1,10 @@
-alias: database-sqlserver-storage
-description: Database Configurator For MS SQL server Storage creation
+alias: database-sqlserver-tnserver
+description: Installation of the TN DB components into MS SQL server
 
 environments:
   default:                 
+    release.major:        10   
+    os.platform:          lnxamd64   
     repo.product:         ${}
     repo.fix:             ${}
     nodes:                ${}
@@ -13,18 +15,18 @@ environments:
     db.name:             ${}                # webM database name
     db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
 
-    db.admin.username:   ${}                # Admin username for db and user creation
-    db.admin.password:   ${}                # REQUIRED: sa password for webm db and user creation    
     db.username:         ${}                # webM database username
     db.password:         ${}                # webM database password
-    
-    db.fixes:            ${}  
 
-    db.STR.components:
-      - STR
-    
+    db.TNS.components:  
+      - TradingNetworks
+      - TradingNetworksArchive
+
     db.product.scripts:         
       - DatabaseComponentConfigurator
+      - TNScdc
+    
+    db.fixes:            ${}                
 
 layers:
   db:
@@ -32,13 +34,11 @@ layers:
     fixRepo:     ${repo.fix}                # install fixes from
     templates:   dbc
     databases:
-      storage:
-        components:  ${db.STR.components}
+      schemas.TNS:
+        components:  ${db.TNS.components}
         version:     ${db.version}
         db.type:     sqlserver
         db.url:      "${db.url}"
-        db.admin.username: "${db.admin.username}"
-        db.admin.password: "${db.admin.password}"
         db.username: "${db.username}"
         db.password: "${db.password}"
         db.name:     ${db.name}
@@ -47,7 +47,7 @@ templates:
   dbc:
     products: ${db.product.scripts}
     fixes:    ${db.fixes}
-
+  
 provision:
   default:
     db: ${nodes}

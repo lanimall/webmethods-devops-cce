@@ -1,0 +1,57 @@
+alias: stack03-is-setup-centralusers
+description: Software AG Integration Servers setup for central users
+
+environments:
+  default:  
+    nodes:               ${}
+  
+    is.instance.name:                 ${}
+
+    # Remote endpoint connections
+    remote.endpoints.alias:               ${} 
+    remote.endpoints.transport.host:      ${} 
+    remote.endpoints.transport.port:      ${}               
+    remote.endpoints.auth.user:           ${} 
+    remote.endpoints.auth.password:       ${} 
+    remote.endpoints.auth.acl:            ${} 
+    remote.endpoints.retryServer:     '5'
+    remote.endpoints.keepalive:       '5'
+    remote.endpoints.timeout:         '1.0'
+
+layers:
+  runtime:
+    templates:   
+      - setup
+
+templates:
+  setup:
+    products:
+      integrationServer:
+        ${is.instance.name}:
+          runtimeComponentId: integrationServer-${instance.name}
+          configuration:
+            integrationServer-${instance.name}:
+              COMMON-COMPONENT-ENDPOINTS:
+                COMMON-COMPONENT-ENDPOINTS-${remote.endpoints.alias}:
+                  '@alias': ${remote.endpoints.alias}
+                  Transport:
+                    Host: ${remote.endpoints.transport.host}
+                    Port: ${remote.endpoints.transport.port}
+                  Auth:
+                    '@type': BASIC
+                    User: ${remote.endpoints.auth.user}
+                    Password: '${remote.endpoints.auth.password}'
+                  ExtendedProperties:
+                    Property:
+                    - '@name': acl
+                      $: ${remote.endpoints.auth.acl}
+                    - '@name': retryServer
+                      $: ${remote.endpoints.retryServer}
+                    - '@name': keepalive
+                      $: ${remote.endpoints.keepalive}
+                    - '@name': timeout
+                      $: ${remote.endpoints.timeout}
+
+provision:
+  default:
+    runtime: ${nodes}

@@ -1,0 +1,85 @@
+alias: stack03-is-setup-tnserver
+description: Software AG Integration Servers setup for TN
+
+environments:
+  default:  
+    repo.product:                     ${}
+    repo.fix:                         ${}
+    tnserver.fixes:                    ${}
+    nodes:                            ${}
+    
+    is.instance.name:                 ${}
+
+    # Database connection
+    db.alias:            ${}
+    db.type.cce:         SQLSERVER          # REQUIRED: upped case
+    db.host:             ${}                
+    db.port:             ${}                
+    db.name:             ${}                
+    db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
+    db.username:         ${}                
+    db.password:         ${}
+
+layers:
+  runtime:
+    productRepo: ${repo.product}
+    fixRepo:     ${repo.fix}
+    templates:
+      - setup
+
+templates:
+  setup:
+    description: TN-Setup
+    fixes: ${tnserver.fixes}
+    products:
+      TNServer:
+      integrationServer:
+        ${is.instance.name}:
+          db.type:            ${db.type.cce}
+          db.url:             '${db.url}'
+          db.username:        ${db.username}
+          db.password:        '${db.password}'
+          db.alias:           ${db.alias}
+          package.list:       WmTN                      # comma-separated list of packages (DO NOT USE SPACES) 
+          runtimeComponentId: integrationServer-${instance.name}
+          configuration:
+            integrationServer-${instance.name}:
+              COMMON-JDBC:
+                COMMON-JDBC-${db.alias}:
+                  Pool:
+                    '@alias': ${db.alias}
+                    Name: ${db.alias}
+                    MinSize: '0'
+                    MaxSize: '10'
+                    MaxIdleTime: '60000'
+                    DatabaseServer:
+                      '@type': ${db.type.cce}
+                      URL: "${db.url}"
+                      User: ${db.username}
+                      Password: '${db.password}'
+                    ExtendedProperties:
+                      Property:
+                      - '@name': AvailConnWarningThreshold
+                        $: '0'
+                      - '@name': WaitingThreadThresholdCount
+                        $: '0'
+                      - '@name': SpyEnabled
+                        $: 'false'
+                      - '@name': SnoopEnabled
+                        $: 'false'
+                      - '@name': SpyParams
+                        $: SpyAttributes=(log=(file)logs/spy/${db.alias}.log;logTName=yes;timestamp=yes)
+                      - '@name': SnoopParams
+                        $: ddtdbg.ProtocolTraceEnable=true;ddtdbg.ProtocolTraceMaxline=16;ddtdbg.ProtocolTraceLocation=logs/snoop/${db.alias}.log;ddtdbg.ProtocolTraceShowTime=true
+              COMMON-DBFUNCTION:
+                COMMON-DBFUNCTION-TN:
+                  Function:
+                    '@alias': TN
+                    Description: Trading Networks Function
+                    PoolAlias: ${db.alias}
+                    FailFastMode: 'false'
+                    CurrentlyInFailFast: 'No' 
+
+provision:
+  default:
+    runtime: ${nodes}

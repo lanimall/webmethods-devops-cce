@@ -1,11 +1,11 @@
-alias: integrationserver-external-db
+alias: integrationserver-runtime-external-db
 description: Software AG Integration Servers connected to backend DB
 
 environments:
   default:  
     repo.product:                     ${}
     repo.fix:                         ${}
-    product.fixes:                    ${}
+    is.fixes:                         ${}
     nodes:                            ${}
 
     is.key.license.alias:             ${}            
@@ -27,20 +27,20 @@ environments:
     db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
     db.username:         ${}                # webM database username
     db.password:         ${}                # webM database password
-    db.alias:            "Default"
+    db.alias:            ${}
 
 layers:
   runtime:
     productRepo: ${repo.product}            # install products from
     fixRepo:     ${repo.fix}                # install fixes from
     templates:   
-      - setup
+      - setupruntime
 
 templates:
-  setup:
+  setupruntime:
     licenses:
       "IntegrationServer/config/licenseKey.xml": "${is.key.license.alias}"
-    fixes: ${product.fixes}
+    fixes: ${is.fixes}
     products:
       integrationServer:
         ${is.instance.name}:

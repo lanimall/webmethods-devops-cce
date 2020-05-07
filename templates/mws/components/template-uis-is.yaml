@@ -1,0 +1,38 @@
+alias: mws-runtime
+description: My webMethods Server base runtime
+
+environments:
+  default:
+    repo.product:                      ${}
+    repo.fix:                          ${}
+    nodes:                             ${}
+
+    # My webMethods Server
+    mws.instance.name:   ${}
+
+layers:
+  runtime:
+    productRepo: ${repo.product}
+    fixRepo:     ${repo.fix}
+    description: MWS IS UI layers
+    templates:   
+      - setupui
+
+templates:
+  setupui:
+    description: MWS IS UI layers
+    fixes: ${ui.fixes}
+    products:
+      centralConfiguratorUI:
+      integrationServerPortal:
+      monitorUI:
+      PortalSharedComponents:
+      MWSDiagnostics:
+    products:
+      MwsProgramFiles:
+        ${mws.instance.name}:
+          runtimeComponentId: MwsProgramFiles-${instance.name}
+
+provision:
+  default:
+    runtime: ${nodes}

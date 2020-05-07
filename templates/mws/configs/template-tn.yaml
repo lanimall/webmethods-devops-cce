@@ -1,0 +1,37 @@
+alias: mws-configs-set-tn-target
+description: My webMethods Server TN configs
+
+environments:
+  default:
+    # My webMethods Server
+    mws.instance.name:           ${}
+    
+    ###### MWS TN Target
+    mws.target.tn.configname:       "tnservers"
+    mws.target.tn.host:             ${}
+    mws.target.tn.port:             ${}
+    mws.target.tn.conn_secured:     ${}
+
+layers:
+  configs:
+    templates:
+      - tnserver
+
+templates:
+  tnserver:
+    description: TN configs
+    products:
+      TNPortal:
+        OSGI-MWS_${mws.instance.name}:
+          configuration:
+            TNPortal-${mws.instance.name}:
+              TN-SERVER-CONFIGURATIONS:
+                ${mws.target.tn.configname}:
+                  '@name': ${mws.target.tn.configname}
+                  host: ${mws.target.tn.host}
+                  port: '${mws.target.tn.port}'
+                  secured: '${mws.target.tn.conn_secured}'
+
+provision:
+  default:
+    configs: ${nodes}

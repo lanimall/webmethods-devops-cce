@@ -1,0 +1,96 @@
+alias: mws-runtime
+description: My webMethods Server base runtime
+
+environments:
+  default:
+    repo.product:                      ${}
+    repo.fix:                          ${}
+    nodes:                             ${}
+
+    # My webMethods Server
+    mws.fixes:           ${}
+    mws.instance.name:   ${}
+    mws.http.port:       8585
+    mws.https.port:      8586
+    mws.jmx.port:        8587
+    mws.memory.init:     2048               
+    mws.memory.max:      4096   
+
+    #if mws behind load balancer, these are the external accessible urls
+    mws.lb.host:         ${}
+    mws.lb.http.port:    ${}
+    mws.lb.https.port:   ${}
+
+    # Database connection
+    db.type:             sqlserver   # REQUIRED: Database type: oracle,sqlserver,db2
+    db.host:             ${}         # REQUIRED: Database server hostname
+    db.port:             ${}         # REQUIRED: Database server port
+    db.name:             ${}         # webM database name
+    db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
+    db.username:         ${}         # Database username
+    db.password:         ${}         # Database password
+
+layers:
+  runtime:
+    productRepo: ${repo.product}
+    fixRepo:     ${repo.fix}
+    description: General purpose MWS layer
+    templates:   
+      - setupruntime
+
+templates:
+  setupruntime:
+    description: MWS instance
+    fixes: ${mws.fixes}
+    products:
+      centralConfiguratorUI:
+      integrationServerPortal:
+      monitorUI:
+      TNPortal:
+      PortalSharedComponents:
+      MWSDiagnostics:
+      MwsProgramFiles:
+        ${mws.instance.name}:
+          node.name:    ${node.alias}
+          http.port:    ${mws.http.port}
+          https.port:   ${mws.https.port}
+          jmx.port:     ${mws.jmx.port}
+          db.type:      ${db.type}
+          db.url:       ${db.url}
+          db.username:  ${db.username}
+          db.password:  ${db.password}
+          configuration:
+            OSGI-MWS_${mws.instance.name}:
+              COMMON-MEMORY:
+                COMMON-MEMORY:
+                  InitSize: ${mws.memory.init}
+                  MaxSize:  ${mws.memory.max}
+            MwsProgramFiles-${mws.instance.name}:
+              COMMON-CLUSTER:
+                COMMON-CLUSTER:
+                  ExtendedProperties:
+                    Property:
+                    - '@name': LoadBalancerHost
+                      $: ${mws.lb.host}
+                    - '@name': LoadBalancerHttpPort
+                      $: ${mws.lb.http.port}
+                    - '@name': LoadBalancerHttpsPort
+                      $: ${mws.lb.https.port}
+                    - '@name': jndiEnabled
+                      $: false
+
+provision:
+  default:
+    runtime: ${nodes}
+
+nodes:
+  default:
+    default:
+      port:   ${spm.port}
+      secure: ${spm.secure}
+      credentials: ${spm.credentials.alias}
+      bootstrapInfo:
+        installDir:   ${bootstrap.install.dir}
+        installer:    ${bootstrap.install.installer}
+        port:         ${bootstrap.ssh.port}
+        credentials:  ${bootstrap.credentials.alias}

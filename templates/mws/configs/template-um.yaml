@@ -1,0 +1,24 @@
+alias: mws-configs-set-um-target
+description: My webMethods Server UM configs
+
+environments:
+  default:
+    # My webMethods Server
+    mws.instance.name:           ${}
+    
+    ###### MWS UM Target
+    mws.target.um.url:       ${}
+
+layers:
+  configs:
+    templates:
+      - um
+
+templates:
+  um:
+    description: UM configs
+    products:
+
+provision:
+  default:
+    configs: ${nodes}
