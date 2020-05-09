@@ -1,0 +1,78 @@
+alias: universalmessaging-configs-add-port
+description: Universal Messaging content
+
+environments:
+  default:
+    nodes:               ${}
+    
+    # instance name
+    um.instance.name:     ${}
+
+    ##UM content
+    um.instance.port.alias:                   ${}
+    um.instance.port.binding:                 ${}
+    um.instance.port.number:                  ${}
+    um.instance.port.autostart:               ${}
+    um.instance.port.allowforinterrealm:      ${}
+    um.instance.port.enableNIO:               ${}
+    um.instance.port.acceptThreads:           ${}
+    um.instance.port.selectThreads:           ${}
+    um.instance.port.advertise:               ${}
+    um.instance.port.allowclientconnections:  ${}
+    um.instance.port.enablePolicyServer:      ${}
+
+layers:
+  configs:
+    templates:
+      - um-port
+
+templates:
+  um-port:
+    descripton: Creating UM Port
+    products:
+      NUMRealmServer:
+        ${um.instance.name}:                                              # instance name is different from realm
+          runtimeComponentId: Universal-Messaging-${instance.name}        # hint for CC to skip instance creation if it exists
+          configuration:
+            Universal-Messaging-${instance.name}:
+              COMMON-PORTS:
+                COMMON-PORTS-${um.instance.port.alias}:
+                  Port:
+                    '@alias': ${um.instance.port.alias}
+                    Enabled: 'true'
+                    Type: STANDARD
+                    Number: ${um.instance.port.number}
+                    Protocol: NSP
+                    Backlog: '100'
+                    ExtendedProperties:
+                      Property:
+                      - '@name': address
+                        $: '${um.instance.port.number}'
+                      - '@name': autostart
+                        $: ${um.instance.port.autostart}
+                      - '@name': allowforinterrealm
+                        $: ${um.instance.port.allowforinterrealm}
+                      - '@name': authtime
+                        $: '1000'
+                      - '@name': EnableNIO
+                        $: ${um.instance.port.enableNIO}
+                      - '@name': acceptThreads
+                        $: '${um.instance.port.acceptThreads}'
+                      - '@name': receivebuffersize
+                        $: '1310720'
+                      - '@name': SelectThreads
+                        $: '${um.instance.port.selectThreads}'
+                      - '@name': advertise
+                        $: ${um.instance.port.advertise}
+                      - '@name': allowclientconnections
+                        $: ${um.instance.port.allowclientconnections}
+                      - '@name': AdapterAlias
+                        $: ${um.instance.port.binding}:${um.instance.port.number}
+                      - '@name': sendbuffersize
+                        $: '1310720'
+                      - '@name': EnablePolicyServer
+                        $: ${um.instance.port.enablePolicyServer}
+              
+provision:
+  default:
+    configs:  ${nodes}

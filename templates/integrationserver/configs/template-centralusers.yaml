@@ -1,5 +1,5 @@
-alias: stack03-is-setup-centralusers
-description: Software AG Integration Servers setup for central users
+alias: integrationserver-configs-centralusers
+description: Software AG Integration Servers connected to central users management (MWS)
 
 environments:
   default:  
@@ -8,7 +8,7 @@ environments:
     is.instance.name:    ${}
 
     # Database connection
-    db.alias:            "MWS"
+    db.alias:            ${}
     db.type.cce:         SQLSERVER          # REQUIRED: upped case
     db.host:             ${}                
     db.port:             ${}                

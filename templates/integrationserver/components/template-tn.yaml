@@ -5,8 +5,9 @@ environments:
   default:  
     repo.product:                     ${}
     repo.fix:                         ${}
-    tnserver.fixes:                    ${}
     nodes:                            ${}
+    
+    tn.fixes:                         ${}
     
     is.instance.name:                 ${}
 
@@ -30,7 +31,7 @@ layers:
 templates:
   setup:
     description: TN-Setup
-    fixes: ${tnserver.fixes}
+    fixes: ${tn.fixes}
     products:
       TNServer:
       integrationServer:

@@ -1,0 +1,38 @@
+alias: universalmessaging-configs-add-jms-connection-factory
+description: Universal Messaging content
+
+environments:
+  default:
+    nodes:               ${}
+    
+    # instance name
+    um.instance.name:    umserver          
+    
+    ##UM content
+    um.jndi.cf.name1:           ${}
+    um.jndi.cf.name1.url:       ${}
+
+layers:
+  configs:
+    templates:
+      - um-jms-connection-factory
+
+templates:
+  um-jms-connection-factory:
+    descripton: Creating UM content
+    products:
+      NUMRealmServer:
+        ${um.instance.name}:                                              # instance name is different from realm
+          runtimeComponentId: Universal-Messaging-${instance.name}        # hint for CC to skip instance creation if it exists
+          configuration:
+            Universal-Messaging-${instance.name}: 
+              UM-JNDI-CF:                                                 ## JNDI connection factories for JMS
+                UM-JNDI-CF-${um.jndi.cf.name1}:
+                  name: ${um.jndi.cf.name1}
+                  type: ConnectionFactory
+                  url: ${um.jndi.cf.name1.url}
+                  durableType: Shared
+
+provision:
+  default:
+    configs:  ${nodes}

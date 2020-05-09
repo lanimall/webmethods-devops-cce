@@ -1,4 +1,4 @@
-alias: stack3-um-runtime
+alias: universalmessaging-runtime
 description: Universal Messaging realm server
 
 environments:
@@ -34,9 +34,9 @@ templates:
         ${um.instance.name}:                                       # instance name is different from realm
           instance.port: ${um.instance.port}                       # instance port
           instance.ip:   ${node.host}                              # bind to node's host name
-          node.alias:    ${um.instance.name}
+          node.alias:    ${instance.name}
           license.file:  UniversalMessaging/server/templates/licence.xml
-          runtimeComponentId: Universal-Messaging-${um.instance.name} # hint for CC to skip instance creation if it exists
+          runtimeComponentId: Universal-Messaging-${instance.name} # hint for CC to skip instance creation if it exists
           configuration:
             Universal-Messaging-${um.instance.name}: 
               COMMON-MEMORY: 
@@ -50,7 +50,7 @@ templates:
                        $: ${um.memory.direct}
               COMMON-JAVASYSPROPS: 
                 COMMON-JAVASYSPROPS:  
-                   REALM: ${um.instance.name}                             # IMPORTANT: this can only be set before first startup
+                   REALM: ${instance.name}                             # IMPORTANT: this can only be set before first startup
                    com.sun.management.jmxremote.port: ${um.jmx.port}
                    com.sun.management.jmxremote.authenticate: false
                    com.sun.management.jmxremote.ssl: false
