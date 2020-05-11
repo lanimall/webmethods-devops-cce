@@ -1,0 +1,129 @@
+alias: universalmessaging-cluster
+description: Universal Messaging cluster configs
+
+environments:
+  default:
+    nodes:               ${}
+
+    um.instance.name:    ${}
+    um.cluster.name:     ${}
+    um.cluster.port:    ${}
+
+layers: 
+  runtime:
+    templates:
+      - um-cluster-${runtime.nodes.count}
+
+templates:
+  um-cluster-2:
+    description: Cluster configuration for 2 node cluster
+    products:
+      NUMRealmServer:
+        ${um.instance.name}:
+          runtimeComponentId: Universal-Messaging-${instance.name} 
+          configuration:
+            Universal-Messaging-${instance.name}:
+              COMMON-CLUSTER:                       
+                COMMON-CLUSTER: 
+                  Name: ${um.cluster.name}
+                  Servers:                                      
+                    Server:
+                      - 
+                        "@name": ${runtime.nodes[1]}
+                        URL: "nsp://${runtime.hosts[1]}:${um.cluster.port}"
+                        ExtendedProperties: 
+                          Property: 
+                            - 
+                              "@name": "siteName"
+                              $: site1
+                      - 
+                        "@name": ${runtime.nodes[2]}
+                        URL: "nsp://${runtime.hosts[2]}:${um.cluster.port}"
+                        ExtendedProperties: 
+                          Property: 
+                            - 
+                              "@name": "siteName"
+                              $: site2
+                  ExtendedProperties:
+                    Property:
+                      - 
+                       "@name": "primeSite"
+                       $: site1
+
+  um-cluster-3:
+    description: Cluster configuration for 3 node cluster
+    products:
+      NUMRealmServer:
+        ${um.instance.name}:
+          runtimeComponentId: Universal-Messaging-${instance.name} 
+          configuration:
+            Universal-Messaging-${instance.name}:
+              COMMON-CLUSTER:                       
+                COMMON-CLUSTER:  
+                  Name: ${um.cluster.name}
+                  Servers:                                      
+                    Server:
+                      - 
+                        "@name": ${runtime.nodes[1]}
+                        URL: "nsp://${runtime.hosts[1]}:${um.cluster.port}"
+                      - 
+                        "@name": ${runtime.nodes[2]}
+                        URL: "nsp://${runtime.hosts[2]}:${um.cluster.port}"
+                      - 
+                        "@name": ${runtime.nodes[3]}
+                        URL: "nsp://${runtime.hosts[3]}:${um.cluster.port}"
+
+  um-cluster-4:
+    description: Cluster configuration for 4 node cluster with 2 sites
+    products:
+      NUMRealmServer:
+        ${node.host}:
+          runtimeComponentId: Universal-Messaging-${instance.name} 
+          configuration:
+            Universal-Messaging-${instance.name}:
+              COMMON-CLUSTER:                       
+                COMMON-CLUSTER:  
+                  Name: ${um.cluster.name}
+                  Servers:                                      
+                    Server:
+                      - 
+                        "@name": ${runtime.nodes[1]}
+                        URL: "nsp://${runtime.hosts[1]}:${um.cluster.port}"
+                        ExtendedProperties: 
+                          Property: 
+                            - 
+                              "@name": "siteName"
+                              $: site1
+                      - 
+                        "@name": ${runtime.nodes[2]}
+                        URL: "nsp://${runtime.hosts[2]}:${um.cluster.port}"
+                        ExtendedProperties: 
+                          Property: 
+                            - 
+                              "@name": "siteName"
+                              $: site1
+                      - 
+                        "@name": ${runtime.nodes[3]}
+                        URL: "nsp://${runtime.hosts[3]}:${um.cluster.port}"
+                        ExtendedProperties: 
+                          Property: 
+                            - 
+                              "@name": "siteName"
+                              $: site2
+                      - 
+                        "@name": ${runtime.nodes[4]}
+                        URL: "nsp://${runtime.hosts[4]}:${um.cluster.port}"
+                        ExtendedProperties: 
+                          Property: 
+                            - 
+                              "@name": "siteName"
+                              $: site2
+                  ExtendedProperties:
+                    Property:
+                      - 
+                       "@name": "primeSite"
+                       $: site1                   
+            
+provision:
+  default:
+    runtime: ${nodes}

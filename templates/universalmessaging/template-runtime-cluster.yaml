@@ -1,20 +1,66 @@
-alias: universalmessaging-cluster
-description: Universal Messaging cluster configs
+alias: universalmessaging-runtime
+description: Universal Messaging realm server
 
 environments:
   default:
-    nodes:               ${}
+    repo.product:         ${}
+    repo.fix:             ${}
+    nodes:                ${}
+    
+    um.license.key.alias: ${}                # REQUIRED: license key
+    um.fixes:             ${}
 
-    um.instance.name:    ${}
-    um.cluster.name:     ${}
-    um.instance.port:    ${}
+    um.instance.name:    ${}                # instance name
+    um.instance.port:    9000               # primary port
+    um.jmx.port:         9988               # jmx port
+    um.memory.init:      1024               # memory configuration
+    um.memory.max:       2048               # memory configuration
+    um.memory.direct:    1G                 # memory configuration
+    
+    #clustering
+    um.cluster.name:     "umcluster"
+    um.cluster.port:     ${um.instance.port}
 
-layers: 
+layers:
   runtime:
+    productRepo: ${repo.product}
+    fixRepo:     ${repo.fix}
     templates:
+      - runtime
       - um-cluster-${runtime.nodes.count}
 
 templates:
+  runtime:
+    licenses:
+      "UniversalMessaging/server/templates/licence.xml": "${um.license.key.alias}"
+    fixes: ${um.fixes}
+    products:
+      NUMRealmServer:
+        ${um.instance.name}:                                       # instance name is different from realm
+          instance.port: ${um.instance.port}                       # instance port
+          instance.ip:   ${node.host}                              # bind to node's host name
+          node.alias:    ${instance.name}
+          license.file:  UniversalMessaging/server/templates/licence.xml
+          runtimeComponentId: Universal-Messaging-${instance.name} # hint for CC to skip instance creation if it exists
+          configuration:
+            Universal-Messaging-${um.instance.name}: 
+              COMMON-MEMORY: 
+                COMMON-MEMORY:                                     
+                  InitSize: ${um.memory.init}
+                  MaxSize:  ${um.memory.max}
+                  ExtendedProperties:                              
+                    Property: 
+                      - 
+                       "@name": "-XX:MaxDirectMemorySize"
+                       $: ${um.memory.direct}
+              COMMON-JAVASYSPROPS: 
+                COMMON-JAVASYSPROPS:  
+                   REALM: ${instance.name}                             # IMPORTANT: this can only be set before first startup
+                   com.sun.management.jmxremote.port: ${um.jmx.port}
+                   com.sun.management.jmxremote.authenticate: false
+                   com.sun.management.jmxremote.ssl: false
+                   CORE_SPIN: false
+
   um-cluster-2:
     description: Cluster configuration for 2 node cluster
     products:
@@ -30,7 +76,7 @@ templates:
                     Server:
                       - 
                         "@name": ${runtime.nodes[1]}
-                        URL: "nsp://${runtime.hosts[1]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[1]}:${um.cluster.port}"
                         ExtendedProperties: 
                           Property: 
                             - 
@@ -38,7 +84,7 @@ templates:
                               $: site1
                       - 
                         "@name": ${runtime.nodes[2]}
-                        URL: "nsp://${runtime.hosts[2]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[2]}:${um.cluster.port}"
                         ExtendedProperties: 
                           Property: 
                             - 
@@ -65,13 +111,13 @@ templates:
                     Server:
                       - 
                         "@name": ${runtime.nodes[1]}
-                        URL: "nsp://${runtime.hosts[1]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[1]}:${um.cluster.port}"
                       - 
                         "@name": ${runtime.nodes[2]}
-                        URL: "nsp://${runtime.hosts[2]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[2]}:${um.cluster.port}"
                       - 
                         "@name": ${runtime.nodes[3]}
-                        URL: "nsp://${runtime.hosts[3]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[3]}:${um.cluster.port}"
 
   um-cluster-4:
     description: Cluster configuration for 4 node cluster with 2 sites
@@ -88,7 +134,7 @@ templates:
                     Server:
                       - 
                         "@name": ${runtime.nodes[1]}
-                        URL: "nsp://${runtime.hosts[1]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[1]}:${um.cluster.port}"
                         ExtendedProperties: 
                           Property: 
                             - 
@@ -96,7 +142,7 @@ templates:
                               $: site1
                       - 
                         "@name": ${runtime.nodes[2]}
-                        URL: "nsp://${runtime.hosts[2]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[2]}:${um.cluster.port}"
                         ExtendedProperties: 
                           Property: 
                             - 
@@ -104,7 +150,7 @@ templates:
                               $: site1
                       - 
                         "@name": ${runtime.nodes[3]}
-                        URL: "nsp://${runtime.hosts[3]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[3]}:${um.cluster.port}"
                         ExtendedProperties: 
                           Property: 
                             - 
@@ -112,7 +158,7 @@ templates:
                               $: site2
                       - 
                         "@name": ${runtime.nodes[4]}
-                        URL: "nsp://${runtime.hosts[4]}:${um.instance.port}"
+                        URL: "nsp://${runtime.hosts[4]}:${um.cluster.port}"
                         ExtendedProperties: 
                           Property: 
                             - 
@@ -123,7 +169,19 @@ templates:
                       - 
                        "@name": "primeSite"
                        $: site1                   
-            
+
 provision:
   default:
     runtime: ${nodes}
+
+nodes:
+  default:
+    default:
+      port:   ${spm.port}
+      secure: ${spm.secure}
+      credentials: ${spm.credentials.alias}
+      bootstrapInfo:
+        installDir:   ${bootstrap.install.dir}
+        installer:    ${bootstrap.install.installer}
+        port:         ${bootstrap.ssh.port}
+        credentials:  ${bootstrap.credentials.alias}
