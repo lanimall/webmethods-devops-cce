@@ -11,7 +11,6 @@ environments:
     um.fixes:             ${}
 
     um.instance.name:     ${}                # instance name
-    um.realm:             ${um.instance.name}
     um.instance.port:     9000               # primary port
     um.jmx.port:          9988               # jmx port
     um.memory.init:       1024               # memory configuration
@@ -34,25 +33,27 @@ templates:
       NUMRealmServer:
         ${um.instance.name}:                                       
           instance.port: ${um.instance.port}                       
+          instance.ip:   ${node.host}                              
           license.file:  UniversalMessaging/server/templates/licence.xml
+          node.alias:    ${node.alias}
           runtimeComponentId: Universal-Messaging-${instance.name}  # hint for CC to skip instance creation if it exists
           configuration:
-            Universal-Messaging-${instance.name}:                  
+            Universal-Messaging-${instance.name}: 
               COMMON-MEMORY: 
                 COMMON-MEMORY:                                     
-                  InitSize: ${um.memory.init}                      
-                  MaxSize:  ${um.memory.max}                       
+                  InitSize: ${um.memory.init}
+                  MaxSize:  ${um.memory.max}
                   ExtendedProperties:                              
                     Property: 
                       - 
                        "@name": "-XX:MaxDirectMemorySize"
-                       $: ${um.memory.direct}                     
+                       $: ${um.memory.direct}
               COMMON-JAVASYSPROPS: 
                 COMMON-JAVASYSPROPS:  
-                   REALM: ${um.realm}                             # IMPORTANT: this can only be set before first startup
-                   com.sun.management.jmxremote.port: ${um.jmx.port} 
-                   com.sun.management.jmxremote.authenticate: false  
-                   com.sun.management.jmxremote.ssl: false           
+                   REALM: ${node.alias}                             # IMPORTANT: this can only be set before first startup
+                   com.sun.management.jmxremote.port: ${um.jmx.port}
+                   com.sun.management.jmxremote.authenticate: false
+                   com.sun.management.jmxremote.ssl: false
 
 provision:
   default:

@@ -1,13 +1,13 @@
-alias: universalmessaging-cluster
+alias: universalmessaging-create-cluster
 description: Universal Messaging cluster configs
 
 environments:
   default:
-    nodes:               ${}
+    nodes:                ${}
 
-    um.instance.name:    ${}
-    um.cluster.name:     ${}
-    um.cluster.port:    ${}
+    um.instance.name:     ${}
+    um.cluster.name:      ${}
+    um.cluster.port:      ${}
 
 layers: 
   runtime:
@@ -77,7 +77,7 @@ templates:
     description: Cluster configuration for 4 node cluster with 2 sites
     products:
       NUMRealmServer:
-        ${node.host}:
+        ${um.instance.name}:
           runtimeComponentId: Universal-Messaging-${instance.name} 
           configuration:
             Universal-Messaging-${instance.name}:
