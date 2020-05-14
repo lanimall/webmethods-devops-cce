@@ -1,0 +1,37 @@
+alias: apigateway-configs-users
+description: API Gateway users configs
+
+environments:
+  default:  
+    nodes:                             ${}
+    
+    agw.instance.type:                 ${}
+    agw.instance.name:                 ${}
+    agw.administrator.password:        ${}
+
+layers:
+  runtime:
+    templates:   
+      - setup
+
+templates:
+  setup:
+    products:
+      ${agw.instance.type}:
+        ${agw.instance.name}:
+          runtimeComponentId: integrationServer-${instance.name}
+          configuration:
+            integrationServer-${instance.name}:              
+              COMMON-LOCAL-USERS:
+                COMMON-LOCAL-USERS-Administrator:
+                  '@id': Administrator
+                  Password: ${agw.administrator.password}
+                  Enabled: 'true'
+                  ExtendedProperties:
+                    Property:
+                    - '@name': AllowDigestAuthentication
+                      $: 'false'
+
+provision:
+  default:
+    runtime: ${nodes}

@@ -6,6 +6,7 @@ environments:
     repo.product:         ${}
     repo.fix:             ${}
     nodes:                ${}
+    aliases:              ${}
     
     um.license.key.alias: ${}                # REQUIRED: license key
     um.fixes:             ${}
@@ -18,6 +19,7 @@ environments:
     um.memory.direct:     1G                 # memory configuration
 
 layers:
+  infra:
   runtime:
     productRepo: ${repo.product}
     fixRepo:     ${repo.fix}
@@ -50,23 +52,29 @@ templates:
                        $: ${um.memory.direct}
               COMMON-JAVASYSPROPS: 
                 COMMON-JAVASYSPROPS:  
-                   REALM: ${node.alias}                             # IMPORTANT: this can only be set before first startup
+                   REALM: ${node.host}                             # IMPORTANT: this can only be set before first startup
                    com.sun.management.jmxremote.port: ${um.jmx.port}
                    com.sun.management.jmxremote.authenticate: false
                    com.sun.management.jmxremote.ssl: false
 
 provision:
   default:
-    runtime: ${nodes}
+    infra:
+      hosts: ${nodes}
+    runtime: 
+      aliases: ${aliases}
 
-# nodes:
-#   default:
-#     default:
-#       port:   ${spm.port}
-#       secure: ${spm.secure}
-#       credentials: ${spm.credentials.alias}
-#       bootstrapInfo:
-#         installDir:   ${bootstrap.install.dir}
-#         installer:    ${bootstrap.install.installer}
-#         port:         ${bootstrap.ssh.port}
-#         credentials:  ${bootstrap.credentials.alias}
+nodes:
+  default:
+    aliasMapping:
+      policy: INDEX
+      prefix: ${node.aliasmapping.prefix}
+    default:
+      port:   ${spm.port}
+      secure: ${spm.secure}
+      credentials: ${spm.credentials.alias}
+      bootstrapInfo:
+        installDir:   ${bootstrap.install.dir}
+        installer:    ${bootstrap.install.installer}
+        port:         ${bootstrap.ssh.port}
+        credentials:  ${bootstrap.credentials.alias}

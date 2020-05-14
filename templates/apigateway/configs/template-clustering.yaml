@@ -1,0 +1,74 @@
+alias: apigateway-configs-clustering
+description: API Gateway cluster configs
+
+environments:
+  default:  
+    nodes:                             ${}
+    
+    agw.instance.type:                 ${}
+    agw.instance.name:                 ${}     
+
+    ##clustering
+    agw.terracotta.url:                    ${}
+    agw.terracotta.key.license.alias:      ${}
+
+layers:
+  runtime:
+    templates:   
+      - setup
+
+templates:
+  setup:
+    licenses:
+      "common/conf/terracotta-license.key": "${agw.terracotta.key.license.alias}"
+    products:
+      ${agw.instance.type}:
+        ${agw.instance.name}:
+          runtimeComponentId: integrationServer-${instance.name}
+          configuration:
+            OSGI-IS_${instance.name}:
+              COMMON-JAVASYSPROPS:
+                COMMON-JAVASYSPROPS: |
+                  test.cluster.withDerby=true
+                  com.tc.l1.max.connect.retries=100
+                  com.tc.l1.socket.reconnect.waitInterval=10000
+            integrationServer-${instance.name}:              
+              COMMON-CLUSTER:
+                COMMON-CLUSTER:
+                  Name: APIGatewayTSAcluster
+                  Enabled: true
+                  Servers:
+                    Server: 
+                      - 
+                       URL: ${agw.terracotta.url}
+                  ExtendedProperties:
+                    Property:
+                      - "@name": SessionTimeout
+                        $: "60"
+                      - "@name": PendingRestart
+                        $: "false"
+                      - "@name": ActionOnStartupError
+                        $: shutdown
+              COMMON-SYSPROPS:
+                COMMON-SYSPROPS:
+                  watt.server.cachemanager.connectTimeout: "600000"
+
+      YAI:
+        OSGI-IS_${agw.instance.name}:
+          configuration:
+            OSGI-IS_${agw.instance.name}-WmAPIGateway:
+              COMMON-CLUSTER:
+                COMMON-CLUSTER:
+                  Enabled: 'true'
+                  ExtendedProperties:
+                    Property:
+                      - "@name": SessionTimeout
+                        $: "60"
+                      - "@name": PendingRestart
+                        $: "false"
+                      - "@name": ActionOnStartupError
+                        $: shutdown
+
+provision:
+  default:
+    runtime: ${nodes}

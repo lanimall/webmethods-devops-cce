@@ -1,17 +1,19 @@
-alias: sag-spm-bootstrap-ssh
+alias: sag-spm-bootstrap-ssh-aliasmapping
 description: SSH-enabled remote installation using CC bootstrap installer
+dslVersion: "1.1"
 
 environments:
   default:
-    nodes: ${}
+    nodes:                ${}
+    hosts:                ${}
 
 layers:
-  runtime:
+  infra:
     templates:             
-      - spm-runtime
+      - spm
 
 templates:
-  spm-runtime:
+  spm:
     products:
       SPM:
         default:
@@ -24,10 +26,16 @@ templates:
 
 provision:
   default:
-    runtime: ${nodes}
+    infra:
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
 
 nodes:
   default:
+    aliasMapping:
+      policy: INDEX
+      prefix: ${aliasmapping.prefix}
+      delimiter: ${aliasmapping.delimiter}
     default:
       port:   ${spm.port}
       secure: ${spm.secure}
