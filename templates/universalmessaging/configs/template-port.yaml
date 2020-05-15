@@ -1,4 +1,4 @@
-alias: universalmessaging-configs-add-port
+alias: universalmessaging-configs-port
 description: Universal Messaging content
 
 environments:
@@ -11,6 +11,7 @@ environments:
     ##UM content
     um.instance.port.alias:                   ${}
     um.instance.port.binding:                 ${}
+    um.instance.port.protocol:                ${}
     um.instance.port.number:                  ${}
     um.instance.port.autostart:               ${}
     um.instance.port.allowforinterrealm:      ${}
@@ -42,7 +43,8 @@ templates:
                     Enabled: 'true'
                     Type: STANDARD
                     Number: ${um.instance.port.number}
-                    Protocol: NSP
+                    Protocol: ${um.instance.port.protocol}
+                    BindAddress: ${node.host}
                     Backlog: '100'
                     ExtendedProperties:
                       Property:
@@ -67,7 +69,7 @@ templates:
                       - '@name': allowclientconnections
                         $: ${um.instance.port.allowclientconnections}
                       - '@name': AdapterAlias
-                        $: ${um.instance.port.binding}:${um.instance.port.number}
+                        $: ${node.host}:${um.instance.port.number}
                       - '@name': sendbuffersize
                         $: '1310720'
                       - '@name': EnablePolicyServer

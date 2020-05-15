@@ -1,0 +1,123 @@
+alias: integrationserver-configs-messaging-jms-defaults
+description: Software AG Integration Servers default JMS messaging configs
+
+environments:
+  default:  
+    nodes:               ${}
+    
+    is.instance.name:    ${}
+
+    jndi.provider.url:        ${}
+    jndi.provider.user:       ${}
+    jndi.provider.password:   ${}
+    jndi.provider.url.ssl:    "No"
+    jndi.connection.factory.name: ${}
+    
+layers:
+  runtime:
+    templates:   
+      - setup
+
+templates:
+  setup:
+    products:
+      integrationServer:
+        ${is.instance.name}:
+          runtimeComponentId: integrationServer-${instance.name}
+          configuration:
+            integrationServer-${instance.name}:
+              COMMON-JNDI:
+                COMMON-JNDI-DEFAULT_IS_JNDI_PROVIDER:
+                  JNDI:
+                    '@alias': DEFAULT_IS_JNDI_PROVIDER
+                    Description: system generated JNDI provider alias
+                    Provider:
+                      URL: ${jndi.provider.url}
+                      InitialContextFactory: com.pcbsys.nirvana.nSpace.NirvanaContextFactory
+                      User: ${jndi.provider.user}
+                      Password: '${jndi.provider.password}'
+                    ExtendedProperties:
+                      Property:
+                      - '@name': isSSL
+                        $: ${jndi.provider.url.ssl}
+              COMMON-JMS:
+                COMMON-JMS-PE_NONTRANSACTIONAL_ALIAS:
+                  JMS:
+                    '@alias': PE_NONTRANSACTIONAL_ALIAS
+                    Description: system generated JMS connection alias
+                    Enabled: 'false'
+                    TransactionType: NO_TRANSACTION
+                    ClientId: PE_NONTRANSACTIONAL_JMS_CLIENT
+                    Provider:
+                      '@type': JNDI
+                      JNDIAlias: DEFAULT_IS_JNDI_PROVIDER
+                      JNDIConnectionFactoryName: ${jndi.connection.factory.name}
+                    User: ''
+                    Password: ''
+                    MaxRetryAttempts: '0'
+                    RetryInterval: '0'
+                    Caching: DISABLED
+                    ExtendedProperties:
+                      Property:
+                      - '@name': jndi_connectionFactoryUpdateType
+                        $: NONE
+                      - '@name': jndi_connectionFactoryPollingInterval
+                        $: '0'
+                      - '@name': jndi_enableFollowTheMaster
+                        $: 'true'
+                      - '@name': classLoader
+                        $: INTEGRATION_SERVER
+                      - '@name': csqSize
+                        $: '-1'
+                      - '@name': csqDrainInOrder
+                        $: 'true'
+                      - '@name': optTempQueueCreate
+                        $: 'true'
+                      - '@name': allowReplyToConsumer
+                        $: 'false'
+                      - '@name': manageDestinations
+                        $: 'true'
+                      - '@name': allowNewConnectionPerTrigger
+                        $: 'false'
+                COMMON-JMS-DEFAULT_IS_JMS_CONNECTION:
+                  JMS:
+                    '@alias': DEFAULT_IS_JMS_CONNECTION
+                    Description: system generated JMS connection alias
+                    Enabled: 'true'
+                    TransactionType: NO_TRANSACTION
+                    ClientId: DEFAULT_IS_JMS_CLIENT
+                    Provider:
+                      '@type': JNDI
+                      JNDIAlias: DEFAULT_IS_JNDI_PROVIDER
+                      JNDIConnectionFactoryName: ${jndi.connection.factory.name}
+                    User: ''
+                    Password: ''
+                    MaxRetryAttempts: '0'
+                    RetryInterval: '0'
+                    Caching: DISABLED
+                    ExtendedProperties:
+                      Property:
+                      - '@name': jndi_connectionFactoryUpdateType
+                        $: NONE
+                      - '@name': jndi_connectionFactoryPollingInterval
+                        $: '0'
+                      - '@name': jndi_enableFollowTheMaster
+                        $: 'true'
+                      - '@name': classLoader
+                        $: INTEGRATION_SERVER
+                      - '@name': csqSize
+                        $: '-1'
+                      - '@name': csqDrainInOrder
+                        $: 'true'
+                      - '@name': optTempQueueCreate
+                        $: 'true'
+                      - '@name': allowReplyToConsumer
+                        $: 'false'
+                      - '@name': manageDestinations
+                        $: 'true'
+                      - '@name': allowNewConnectionPerTrigger
+                        $: 'false'  
+
+provision:
+  default:
+    runtime: ${nodes}

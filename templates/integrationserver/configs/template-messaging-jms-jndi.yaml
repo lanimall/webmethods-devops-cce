@@ -1,0 +1,48 @@
+alias: integrationserver-configs-messaging-jms-jndi
+description: Software AG Integration Servers JMS messaging Register JNDI
+
+environments:
+  default:  
+    nodes:                        ${}
+    
+    is.instance.name:             ${}
+
+    jndi.alias:                   ${}
+    jndi.description:             ${}
+    jndi.provider.url:            ${}
+    jndi.provider.initialcontextfactory: "com.pcbsys.nirvana.nSpace.NirvanaContextFactory"
+    jndi.provider.user:           ${}
+    jndi.provider.password:       ${}
+    jndi.provider.url.ssl:        ${}         ## Yes / No
+    
+layers:
+  runtime:
+    templates:   
+      - setup
+
+templates:
+  setup:
+    products:
+      integrationServer:
+        ${is.instance.name}:
+          runtimeComponentId: integrationServer-${instance.name}
+          configuration:
+            integrationServer-${instance.name}:
+              COMMON-JNDI:
+                COMMON-JNDI-${jndi.alias}:
+                  JNDI:
+                    '@alias': ${jndi.alias}
+                    Description: ${jndi.description}
+                    Provider:
+                      URL: ${jndi.provider.url}
+                      InitialContextFactory: ${jndi.provider.initialcontextfactory}
+                      User: ${jndi.provider.user}
+                      Password: '${jndi.provider.password}'
+                    ExtendedProperties:
+                      Property:
+                      - '@name': isSSL
+                        $: ${jndi.provider.url.ssl}
+
+provision:
+  default:
+    runtime: ${nodes}

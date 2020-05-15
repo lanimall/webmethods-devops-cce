@@ -1,0 +1,86 @@
+alias: integrationserver-configs-messaging-jms-connection
+description: Software AG Integration Servers JMS messaging - Register JMS Connection
+
+environments:
+  default:  
+    nodes:                                                ${}
+    
+    is.instance.name:                                     ${}
+
+    jms.connection.alias:                                 ${}
+    jms.connection.description:                           ${}
+    jms.connection.enabled:                               ${}
+    jms.connection.transaction_type:                      ${} ##NO_TRANSACTION
+    jms.connection.clientid:                              ${}
+    jms.connection.user:                                  ${}
+    jms.connection.password:                              ${}
+    jms.connection.retries.max:                           ${}
+    jms.connection.retries.interval:                      ${}
+    jms.connection.caching.state:                         ${}  ##DISABLED
+    jms.connection.jndi.alias:                            ${}
+    jms.connection.jndi.factory.name:                     ${}
+
+    jms.connection.props.jndi_enableFollowTheMaster:      ${}
+    jms.connection.props.csqSize:                         ${}
+    jms.connection.props.csqDrainInOrder:                 ${}
+    jms.connection.props.optTempQueueCreate:              ${}
+    jms.connection.props.allowReplyToConsumer:            ${}
+    jms.connection.props.manageDestinations:              ${}
+    jms.connection.props.allowNewConnectionPerTrigger:    ${}
+
+layers:
+  runtime:
+    templates:   
+      - setup
+
+templates:
+  setup:
+    products:
+      integrationServer:
+        ${is.instance.name}:
+          runtimeComponentId: integrationServer-${instance.name}
+          configuration:
+            integrationServer-${instance.name}:
+              COMMON-JMS:
+                COMMON-JMS-${jms.connection.alias}:
+                  JMS:
+                    '@alias': ${jms.connection.alias}
+                    Description: ${jms.connection.description}
+                    Enabled: ${jms.connection.enabled}
+                    TransactionType: ${jms.connection.transaction_type}
+                    ClientId: ${jms.connection.clientid}
+                    Provider:
+                      '@type': JNDI
+                      JNDIAlias: ${jms.connection.jndi.alias}
+                      JNDIConnectionFactoryName: ${jms.connection.jndi.factory.name}
+                    User: ${jms.connection.user}
+                    Password: '${jms.connection.password}'
+                    MaxRetryAttempts: ${jms.connection.retries.max}
+                    RetryInterval: ${jms.connection.retries.interval}
+                    Caching: ${jms.connection.caching.state}
+                    ExtendedProperties:
+                      Property:
+                      - '@name': jndi_connectionFactoryUpdateType
+                        $: NONE
+                      - '@name': jndi_connectionFactoryPollingInterval
+                        $: '0'
+                      - '@name': jndi_enableFollowTheMaster
+                        $: ${jms.connection.props.jndi_enableFollowTheMaster}
+                      - '@name': classLoader
+                        $: INTEGRATION_SERVER
+                      - '@name': csqSize
+                        $: ${jms.connection.props.csqSize}
+                      - '@name': csqDrainInOrder
+                        $: ${jms.connection.props.csqDrainInOrder}
+                      - '@name': optTempQueueCreate
+                        $: ${jms.connection.props.optTempQueueCreate}
+                      - '@name': allowReplyToConsumer
+                        $: ${jms.connection.props.allowReplyToConsumer}
+                      - '@name': manageDestinations
+                        $: ${jms.connection.props.manageDestinations}
+                      - '@name': allowNewConnectionPerTrigger
+                        $: ${jms.connection.props.allowNewConnectionPerTrigger}
+
+provision:
+  default:
+    runtime: ${nodes}

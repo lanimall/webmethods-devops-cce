@@ -1,4 +1,4 @@
-alias: universalmessaging-configs-add-jms-connection-factory
+alias: universalmessaging-configs-jms-connection-factory
 description: Universal Messaging content
 
 environments:
