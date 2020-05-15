@@ -1,4 +1,4 @@
-alias: apigateway-runtime
+alias: template-aliasmapping-apigateway-runtime
 description: API Gateway runtime provisioning
 dslVersion: "1.1"
 

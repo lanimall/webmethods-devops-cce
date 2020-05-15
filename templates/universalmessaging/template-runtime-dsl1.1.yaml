@@ -1,12 +1,13 @@
-alias: universalmessaging-runtime
+alias: template-aliasmapping-universalmessaging-runtime
 description: Universal Messaging realm server
+dslVersion: "1.1"
 
 environments:
   default:
+    nodes:                ${}
+    hosts:                ${}
     repo.product:         ${}
     repo.fix:             ${}
-    nodes:                ${}
-    aliases:              ${}
     
     um.license.key.alias: ${}                # REQUIRED: license key
     um.fixes:             ${}
@@ -20,14 +21,20 @@ environments:
 
 layers:
   infra:
+    templates:             
+      - spm
   runtime:
     productRepo: ${repo.product}
     fixRepo:     ${repo.fix}
     templates:
-      - runtime
+      - setupruntime
 
 templates:
-  runtime:
+  spm: 
+    products:
+      SPM:
+        OSGI-SPM:
+  setupruntime:
     licenses:
       "UniversalMessaging/server/templates/licence.xml": "${um.license.key.alias}"
     fixes: ${um.fixes}
@@ -52,7 +59,7 @@ templates:
                        $: ${um.memory.direct}
               COMMON-JAVASYSPROPS: 
                 COMMON-JAVASYSPROPS:  
-                   REALM: ${node.host}                             # IMPORTANT: this can only be set before first startup
+                   REALM: ${node.alias}                             # IMPORTANT: this can only be set before first startup
                    com.sun.management.jmxremote.port: ${um.jmx.port}
                    com.sun.management.jmxremote.authenticate: false
                    com.sun.management.jmxremote.ssl: false
@@ -60,15 +67,18 @@ templates:
 provision:
   default:
     infra:
-      hosts: ${nodes}
-    runtime: 
-      aliases: ${aliases}
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
+    runtime:
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
 
 nodes:
   default:
     aliasMapping:
       policy: INDEX
-      prefix: ${node.aliasmapping.prefix}
+      prefix: ${aliasmapping.prefix}
+      delimiter: ${aliasmapping.delimiter}
     default:
       port:   ${spm.port}
       secure: ${spm.secure}

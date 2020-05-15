@@ -1,13 +1,15 @@
-alias: integrationserver-terracotta-clustering
-description: terracotta clustering config for integration server
+alias: template-aliasmapping-integrationserver-runtime-external-db
+description: Software AG Integration Servers connected to backend DB
+dslVersion: "1.1"
 
 environments:
   default:  
-    repo.product:                     ${}
-    repo.fix:                         ${}
-    tc.fixes:                         ${}
-    nodes:                            ${}
+    nodes:                ${}
+    hosts:                ${}
+    repo.product:         ${}
+    repo.fix:             ${}
 
+    is.fixes:                         ${}
     is.key.license.alias:             ${}            
     is.instance.name:                 ${}                             
     is.primary.port:                  5555                             
@@ -27,20 +29,27 @@ environments:
     db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
     db.username:         ${}                # webM database username
     db.password:         ${}                # webM database password
-    db.alias:            "Default"
+    db.alias:            ${}
 
 layers:
+  infra:
+    templates:             
+      - spm
   runtime:
     productRepo: ${repo.product}            # install products from
     fixRepo:     ${repo.fix}                # install fixes from
     templates:   
-      - setup
+      - setupruntime
 
 templates:
-  setup:
+  spm: 
+    products:
+      SPM:
+        OSGI-SPM:
+  setupruntime:
     licenses:
       "IntegrationServer/config/licenseKey.xml": "${is.key.license.alias}"
-    fixes: ${tc.fixes}
+    fixes: ${is.fixes}
     products:
       integrationServer:
         ${is.instance.name}:
@@ -88,10 +97,19 @@ templates:
             
 provision:
   default:
-    runtime: ${nodes}
+    infra:
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
+    runtime:
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
 
 nodes:
   default:
+    aliasMapping:
+      policy: INDEX
+      prefix: ${aliasmapping.prefix}
+      delimiter: ${aliasmapping.delimiter}
     default:
       port:   ${spm.port}
       secure: ${spm.secure}

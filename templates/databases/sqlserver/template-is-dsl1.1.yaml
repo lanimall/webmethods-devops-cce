@@ -1,0 +1,85 @@
+alias: database-sqlserver-integrationserver-core-aliasmapping
+description: Installation of the IS core DB components into MS SQL server
+dslVersion: "1.1"
+
+environments:
+  default:                 
+    nodes:                ${}
+    hosts:                ${}
+    repo.product:         ${}
+    repo.fix:             ${}
+    
+    db.host:             ${}                # REQUIRED: Database server hostname
+    db.version:          ${}                # latest or exact version 10.5
+    db.port:             ${}                # Default port
+    db.name:             ${}                # webM database name
+    db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
+    db.username:         ${}                # webM database username
+    db.password:         ${}                # webM database password
+    
+    db.fixes:            ${}  
+
+    #Component list for creating DB schemas for Integration Server and Microservices Runtime    
+    db.PIE.components: 
+      - ISInternal
+      - ISCoreAudit
+      - CrossReference
+      - DocumentHistory
+      - DistributedLocking 
+
+    db.product.scripts:         
+      - DatabaseComponentConfigurator
+      - PIEcdc
+      - PIEEmbeddedCdc
+    
+layers:
+  infra:
+    templates:             
+      - spm
+  runtime:
+    productRepo: ${repo.product}            # install products from
+    fixRepo:     ${repo.fix}                # install fixes from
+    templates:   dbc
+    databases:
+      schemas.PIE:
+        components:  ${db.PIE.components}
+        version:     ${db.version}
+        db.type:     sqlserver
+        db.url:      "${db.url}"
+        db.username: "${db.username}"
+        db.password: "${db.password}"
+        db.name:     ${db.name}
+
+templates:
+  spm: 
+    products:
+      SPM:
+        OSGI-SPM:
+  dbc:
+    products: ${db.product.scripts}
+    fixes:    ${db.fixes}
+
+provision:
+  default:
+    infra:
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
+    runtime:
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
+
+nodes:
+  default:
+    aliasMapping:
+      policy: INDEX
+      prefix: ${aliasmapping.prefix}
+      delimiter: ${aliasmapping.delimiter}
+    default:
+      port:   ${spm.port}
+      secure: ${spm.secure}
+      credentials: ${spm.credentials.alias}
+      bootstrapInfo:
+        installDir:   ${bootstrap.install.dir}
+        installer:    ${bootstrap.install.installer}
+        port:         ${bootstrap.ssh.port}
+        credentials:  ${bootstrap.credentials.alias}

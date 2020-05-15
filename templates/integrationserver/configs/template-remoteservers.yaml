@@ -14,9 +14,9 @@ environments:
     remote.endpoints.auth.user:           ${} 
     remote.endpoints.auth.password:       ${} 
     remote.endpoints.auth.acl:            ${} 
-    remote.endpoints.retryServer:     '5'
-    remote.endpoints.keepalive:       '5'
-    remote.endpoints.timeout:         '1.0'
+    remote.endpoints.retryServer:         '5'
+    remote.endpoints.keepalive:           '5'
+    remote.endpoints.timeout:             '1.0'
 
 layers:
   runtime:
