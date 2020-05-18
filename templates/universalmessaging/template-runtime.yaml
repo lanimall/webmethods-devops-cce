@@ -14,9 +14,9 @@ environments:
     um.realm:             ${um.instance.name}
     um.instance.port:     9000               # primary port
     um.jmx.port:          9988               # jmx port
-    um.memory.init:       1024               # memory configuration
-    um.memory.max:        2048               # memory configuration
-    um.memory.direct:     1G                 # memory configuration
+    um.memory.init:       ${}                # memory configuration
+    um.memory.max:        ${}                # memory configuration
+    um.memory.direct:     1G                # memory configuration
 
 layers:
   runtime:

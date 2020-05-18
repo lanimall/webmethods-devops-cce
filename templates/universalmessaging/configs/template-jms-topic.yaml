@@ -1,0 +1,55 @@
+alias: universalmessaging-configs-jms-topic
+description: Universal Messaging configurations
+
+environments:
+  default:
+    nodes:               ${}
+    
+    # instance name
+    um.instance.name:    umserver     
+    
+    ## um content
+    um.jndi.topic.name:           ${}                 # topic name
+    um.jndi.topic.storename:      ${um.jndi.topic.name}  # JNDI topic store name
+    
+    ## topic configs
+    um.topic.name:                ${um.jndi.topic.name}
+    um.topic.type:                ${}              # topic type: Transient|Simple|Reliable|Persistent|Mixed|Off_Heap|Paged
+    um.topic.ttl:                 ${}              # topic time to live
+    um.topic.capacity:            ${}              # topic capacity
+    um.topic.clusterwide:         ${}              # topic is cluster wide? true/false
+
+    um.configs:                             # list of inline templates to apply
+      - jndi                
+      - store
+
+layers:
+  runtime:
+    templates: ${um.configs}
+
+templates:
+  jndi:
+    products:                              
+      NUMRealmServer:                                              # Universal Messaging | Realm Server
+        ${um.instance.name}:                                       # instance name is different from realm
+          runtimeComponentId: Universal-Messaging-${instance.name} # hint for CC to skip instance creation if it exists
+          configuration:
+            Universal-Messaging-${instance.name}:
+              UM-JNDI-DEST:
+                UM-JNDI-DEST-${um.jndi.topic.name}:
+                  name: ${um.jndi.topic.name}
+                  type: Topic
+                  storeName: ${um.jndi.topic.storename}
+                  autoCreateDest: true
+  store:
+    description: Configure topics. Requires Universal Messaging 10.1
+    products:                              
+      NUMRealmServer:                                              # Universal Messaging | Realm Server
+        ${um.instance.name}:                                       # instance name is different from realm
+          runtimeComponentId: Universal-Messaging-${instance.name} # hint for CC to skip instance creation if it exists
+          configuration:
+            Universal-Messaging-${instance.name}:
+    
+provision:
+  default:
+    runtime: ${nodes} # apply to selected nodes

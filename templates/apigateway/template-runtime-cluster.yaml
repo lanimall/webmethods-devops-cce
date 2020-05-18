@@ -15,8 +15,8 @@ environments:
     agw.primary.port:                  5555                             
     agw.diagnostic.port:               9999                             
     agw.jmx.port:                      5559                             
-    agw.memory.init:                   2048                             
-    agw.memory.max:                    4096                             
+    agw.memory.init:                   ${}                             
+    agw.memory.max:                    ${}                             
     agw.install.service:               false
     
 layers:

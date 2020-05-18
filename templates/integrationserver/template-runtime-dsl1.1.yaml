@@ -15,8 +15,8 @@ environments:
     is.primary.port:                  5555                             
     is.diagnostic.port:               9999                             
     is.jmx.port:                      5559                             
-    is.memory.init:                   1024                             
-    is.memory.max:                    2048                             
+    is.memory.init:                   ${}
+    is.memory.max:                    ${}
     is.install.service:               false
     is.instance.packages:             ""
     is.administrator.password:        ${}

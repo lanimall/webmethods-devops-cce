@@ -36,11 +36,11 @@ layers:
         components:  ${db.STR.components}
         version:     ${db.version}
         db.type:     sqlserver
-        db.url:      "${db.url}"
-        db.admin.username: "${db.admin.username}"
-        db.admin.password: "${db.admin.password}"
-        db.username: "${db.username}"
-        db.password: "${db.password}"
+        db.url:      '${db.url}'
+        db.admin.username: ${db.admin.username}
+        db.admin.password: '${db.admin.password}'
+        db.username: ${db.username}
+        db.password: '${db.password}'
         db.name:     ${db.name}
 
 templates:

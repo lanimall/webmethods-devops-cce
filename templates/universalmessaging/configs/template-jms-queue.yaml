@@ -1,0 +1,88 @@
+alias: universalmessaging-configs-jms-queue
+description: Universal Messaging configurations
+
+environments:
+  default:
+    nodes:               ${}
+    
+    # instance name
+    um.instance.name:    ${}     
+    
+    ## um content
+    um.jndi.queue.name:           ${}                 # Queue name
+    um.jndi.queue.storename:      ${um.jndi.queue.name}  # JNDI queue store name
+    
+    ## queue configs
+    um.queue.name:                ${um.jndi.queue.name}
+    um.queue.type:                ${}              # Queue type: Transient|Simple|Reliable|Persistent|Mixed|Off_Heap|Paged
+    um.queue.ttl:                 ${}              # Queue time to live
+    um.queue.capacity:            ${}              # Queue capacity
+    um.queue.clusterwide:         ${}              # Queue is cluster wide? true/false
+
+    um.configs:                             # list of inline templates to apply
+      - jndi                
+      - store
+
+layers:
+  runtime:
+    templates: ${um.configs}
+
+templates:
+  jndi:
+    products:                              
+      NUMRealmServer:                                              # Universal Messaging | Realm Server
+        ${um.instance.name}:                                       # instance name is different from realm
+          runtimeComponentId: Universal-Messaging-${instance.name} # hint for CC to skip instance creation if it exists
+          configuration:
+            Universal-Messaging-${instance.name}:
+              UM-JNDI-DEST:
+                UM-JNDI-DEST-${um.jndi.queue.name}:
+                  name: ${um.jndi.queue.name}
+                  type: Queue
+                  storeName: ${um.jndi.queue.storename}
+                  autoCreateDest: true
+  store:
+    description: Configure queues. Requires Universal Messaging 10.1
+    products:                              
+      NUMRealmServer:                                              # Universal Messaging | Realm Server
+        ${um.instance.name}:                                       # instance name is different from realm
+          runtimeComponentId: Universal-Messaging-${instance.name} # hint for CC to skip instance creation if it exists
+          configuration:
+            Universal-Messaging-${instance.name}:                  
+              UM-QUEUES:
+                UM-QUEUES-${um.queue.name}:
+                  name: ${um.queue.name}
+                  type: ${um.queue.type}
+                  ttl:  ${um.queue.ttl}
+                  capacity: ${um.queue.capacity}
+                  deadEventStore: ''
+                  clusterWide: ${um.queue.clusterwide}
+                  storageProperties:
+                    autoMaintenance: 'true'
+                    honourCapacity: 'true'
+                    enableCaching: 'true'
+                    cacheOnReload: 'true'
+                    enableReadBuffering: 'true'
+                    enableMulticast: 'false'
+                    readBufferSize: '10240'
+                    syncEachWrite: 'false'
+                    syncBatchSize: N/A
+                    syncBatchTime: N/A
+                    fanoutArchiveTarget: ''
+                    priority: '4'
+                    eventsPerSpindle: '50000'
+                    stampDictionary: default
+                  protoBufDescriptor: ''
+                  queueACLs:
+                    queueACLEntry:
+                    - name: Everyone
+                      manageACL: 'false'
+                      full: 'true'
+                      purge: 'true'
+                      peek: 'true'
+                      push: 'true'
+                      pop: 'true'
+    
+provision:
+  default:
+    runtime: ${nodes} # apply to selected nodes

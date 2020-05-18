@@ -1,0 +1,39 @@
+alias: universalmessaging-configs-jms-topic-connectionfactory
+description: Universal Messaging content
+
+environments:
+  default:
+    nodes:               ${}
+    
+    # instance name
+    um.instance.name:          ${}          
+    
+    ##UM content
+    um.jndi.cf.name:           ${}
+    um.jndi.cf.url:            ${}
+    um.jndi.cf.type:           ${}
+
+layers:
+  configs:
+    templates:
+      - config-cf-setup
+
+templates:
+  config-cf-setup:
+    descripton: Creating UM topic connection factory
+    products:
+      NUMRealmServer:
+        ${um.instance.name}:                                              # instance name is different from realm
+          runtimeComponentId: Universal-Messaging-${instance.name}        # hint for CC to skip instance creation if it exists
+          configuration:
+            Universal-Messaging-${instance.name}: 
+              UM-JNDI-CF:                                                 ## JNDI connection factories for JMS
+                UM-JNDI-CF-${um.jndi.cf.name}:
+                  name: ${um.jndi.cf.name}
+                  type: TopicConnectionFactory
+                  url: ${um.jndi.cf.url}
+                  durableType: ${um.jndi.cf.type}
+
+provision:
+  default:
+    configs:  ${nodes}

@@ -12,6 +12,7 @@ environments:
     ids.port.http:         9240
     ids.port.tcp:          9340
     ids.fixes:             ${}
+
     ids.base.path:         ${}
     ids.shared.path.logs:  "${ids.base.path}/logs"
     ids.shared.path.repo:  

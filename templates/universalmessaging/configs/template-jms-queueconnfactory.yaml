@@ -1,4 +1,4 @@
-alias: universalmessaging-configs-jms-connection-factory
+alias: universalmessaging-configs-jms-queue-connectionfactory
 description: Universal Messaging content
 
 environments:
@@ -6,20 +6,20 @@ environments:
     nodes:               ${}
     
     # instance name
-    um.instance.name:    umserver          
+    um.instance.name:          ${}          
     
     ##UM content
-    um.jndi.cf.name1:           ${}
-    um.jndi.cf.name1.url:       ${}
+    um.jndi.cf.name:           ${}
+    um.jndi.cf.url:            ${}
 
 layers:
   configs:
     templates:
-      - um-jms-connection-factory
+      - config-cf-setup
 
 templates:
-  um-jms-connection-factory:
-    descripton: Creating UM content
+  config-cf-setup:
+    descripton: Creating UM queue connection factory
     products:
       NUMRealmServer:
         ${um.instance.name}:                                              # instance name is different from realm
@@ -27,11 +27,10 @@ templates:
           configuration:
             Universal-Messaging-${instance.name}: 
               UM-JNDI-CF:                                                 ## JNDI connection factories for JMS
-                UM-JNDI-CF-${um.jndi.cf.name1}:
-                  name: ${um.jndi.cf.name1}
-                  type: ConnectionFactory
-                  url: ${um.jndi.cf.name1.url}
-                  durableType: Shared
+                UM-JNDI-CF-${um.jndi.cf.name}:
+                  name: ${um.jndi.cf.name}
+                  type: QueueConnectionFactory
+                  url: ${um.jndi.cf.url}
 
 provision:
   default:
