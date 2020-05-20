@@ -1,4 +1,4 @@
-alias: stack02-integrationserver-cloudstreams
+alias: integrationserver-cloudstreams
 description: CloudStreams provisioning on top of IS instance
 
 environments:
