@@ -1,31 +1,32 @@
-alias: integrationserver-cloudstreams
-description: CloudStreams provisioning on top of IS instance
+alias: integrationserver-deployer
+description: deployer provisioning on top of IS instance
 
 environments:
   default:
     repo.product:                     ${}
     repo.fix:                         ${}
     nodes:                            ${}
-    
+
     is.component.fixes:               ${}
     is.instance.name:                 ${}                 # IS instance name to provision on top
-    is.instance.type:                 integrationServer   # IS instance type: integrationServer(for all versions) or MSC(for 10.3 and lower)
 
 layers:
   runtime:
     productRepo: ${repo.product}
     fixRepo:     ${repo.fix}
     templates:
-      - cloudstreams
+      - deployer
 
 templates:
-  cloudstreams:
+  deployer:
     fixes: ${is.component.fixes}
     products:
-      wst:
-      ${is.instance.type}:
+      Deployer:
+      NUMDeployer:
+      PIFDeployment:
+      integrationServer:
         ${is.instance.name}: 
-          package.list:       WmCloudStreams,WmCloudStreamsAnalytics  # comma-separated list of packages (DO NOT USE SPACES) 
+          package.list:       WmDeployer,WmNUMDeployer,WmBrokerDeployer,WmAgileAppsDeployer,WmCloudStreamsDeployer
           runtimeComponentId: integrationServer-${instance.name}   # hint to find existing instance by id
 
 provision:

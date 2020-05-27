@@ -21,16 +21,6 @@ environments:
     is.instance.packages:             ""
     is.administrator.password:        ${}
 
-    # Database connection
-    db.type:             sqlserver          # REQUIRED: Database type: oracle,sqlserver,db2
-    db.host:             ${}                # REQUIRED: Database server hostname
-    db.port:             ${}                # Default port
-    db.name:             ${}                # webM database name
-    db.url:              "jdbc:wm:sqlserver://${db.host}:${db.port};databaseName=${db.name}"
-    db.username:         ${}                # webM database username
-    db.password:         ${}                # webM database password
-    db.alias:            "Default"
-
 layers:
   infra:
     templates:             
@@ -58,11 +48,6 @@ templates:
           jmx.port:           ${is.jmx.port}
           license.file:       IntegrationServer/config/licenseKey.xml
           install.service:    ${is.install.service}
-          db.type:            ${db.type}
-          db.url:             '${db.url}'
-          db.username:        ${db.username}
-          db.password:        '${db.password}'
-          db.alias:           ${db.alias}
           configuration:
             OSGI-IS_${is.instance.name}:
               COMMON-MEMORY:

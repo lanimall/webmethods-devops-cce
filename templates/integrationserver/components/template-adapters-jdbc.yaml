@@ -5,9 +5,9 @@ environments:
   default:
     repo.product:                     ${}
     repo.fix:                         ${}
-    adapters.fixes:                    ${}
     nodes:                            ${}
 
+    is.component.fixes:               ${}
     is.instance.name:                 ${}                 # IS instance name to provision on top
     is.instance.type:                 integrationServer   # IS instance type: integrationServer(for all versions) or MSC(for 10.3 and lower)
 
@@ -21,7 +21,7 @@ layers:
 templates:
   adapters:
     description: JDBC Adapter
-    fixes: ${adapters.fixes}
+    fixes: ${is.component.fixes}
     products:
       jdbcAdapter:
       ${is.instance.type}:

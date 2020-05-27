@@ -7,8 +7,7 @@ environments:
     repo.fix:                         ${}
     nodes:                            ${}
     
-    tn.fixes:                         ${}
-    
+    is.component.fixes:               ${}
     is.instance.name:                 ${}
 
     # Database connection
@@ -31,7 +30,7 @@ layers:
 templates:
   setup:
     description: TN-Setup
-    fixes: ${tn.fixes}
+    fixes: ${is.component.fixes}
     products:
       TNServer:
       integrationServer:

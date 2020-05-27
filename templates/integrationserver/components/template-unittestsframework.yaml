@@ -1,31 +1,30 @@
-alias: integrationserver-cloudstreams
-description: CloudStreams provisioning on top of IS instance
+alias: integrationserver-unittests-framework
+description: deployer provisioning on top of IS instance
 
 environments:
   default:
     repo.product:                     ${}
     repo.fix:                         ${}
     nodes:                            ${}
-    
+
     is.component.fixes:               ${}
     is.instance.name:                 ${}                 # IS instance name to provision on top
-    is.instance.type:                 integrationServer   # IS instance type: integrationServer(for all versions) or MSC(for 10.3 and lower)
 
 layers:
   runtime:
     productRepo: ${repo.product}
     fixRepo:     ${repo.fix}
     templates:
-      - cloudstreams
+      - unittestsframework
 
 templates:
-  cloudstreams:
+  unittestsframework:
     fixes: ${is.component.fixes}
     products:
-      wst:
-      ${is.instance.type}:
+      GWM_IS:
+      integrationServer:
         ${is.instance.name}: 
-          package.list:       WmCloudStreams,WmCloudStreamsAnalytics  # comma-separated list of packages (DO NOT USE SPACES) 
+          package.list:       WmServiceMock
           runtimeComponentId: integrationServer-${instance.name}   # hint to find existing instance by id
 
 provision:

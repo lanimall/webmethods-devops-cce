@@ -1,0 +1,59 @@
+alias: asset-build-environment-aliasmappingboot
+description: Software AG Asset Build Environment
+dslVersion: "1.1"
+
+environments:
+  default:  
+    nodes:                ${}
+    hosts:                ${}
+    repo.product:         ${}
+    repo.fix:             ${}
+
+    abe.fixes:            ${}
+
+
+layers:
+  infra:
+    templates:             
+      - spm
+  runtime:
+    productRepo: ${repo.product}
+    fixRepo:     ${repo.fix}
+    templates:
+      - abe
+
+templates:
+  spm: 
+    products:
+      SPM:
+        OSGI-SPM:
+  abe:
+    fixes: ${abe.fixes}
+    products:
+      CLI:
+      acdl:
+
+provision:
+  default:
+    infra:
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
+    runtime:
+      hosts:    ${hosts}        # all hosts
+      aliases:  ${nodes}        # all aliases
+
+nodes:
+  default:
+    aliasMapping:
+      policy: INDEX
+      prefix: ${aliasmapping.prefix}
+      delimiter: ${aliasmapping.delimiter}
+    default:
+      port:   ${spm.port}
+      secure: ${spm.secure}
+      credentials: ${spm.credentials.alias}
+      bootstrapInfo:
+        installDir:   ${bootstrap.install.dir}
+        installer:    ${bootstrap.install.installer}
+        port:         ${bootstrap.ssh.port}
+        credentials:  ${bootstrap.credentials.alias}
