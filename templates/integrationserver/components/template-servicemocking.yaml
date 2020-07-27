@@ -1,5 +1,5 @@
-alias: integrationserver-unittests-framework
-description: deployer provisioning on top of IS instance
+alias: integrationserver-servicemocking
+description: Service mocking component for IS instance
 
 environments:
   default:
@@ -8,20 +8,19 @@ environments:
     nodes:                            ${}
 
     is.component.fixes:               ${}
-    is.instance.name:                 ${}                 # IS instance name to provision on top
 
 layers:
   runtime:
     productRepo: ${repo.product}
     fixRepo:     ${repo.fix}
     templates:
-      - unittestsframework
+      - adapters
 
 templates:
-  unittestsframework:
+  adapters:
     fixes: ${is.component.fixes}
     products:
-      GWM_IS:
+      GWM_IS:   # Unit Test Framework
       integrationServer:
         ${is.instance.name}: 
           package.list:       WmServiceMock

@@ -1,0 +1,97 @@
+alias: cicd-all-in-one
+description: Software AG Build and Deployment tools
+
+environments:
+  default:  
+    nodes:                ${}
+    repo.product:         ${}
+    repo.fix:             ${}
+
+    ## abe
+    abe.fixes:                              ${}
+
+    ## designer
+    designer.fixes:                         ${}
+    designer.testsuite.license.key.alias:   ${}
+
+    ## deployer
+    is.fixes:                         ${}
+    is.license.key.alias:             ${}            
+    is.instance.name:                 ${}                             
+    is.primary.port:                  5555                             
+    is.diagnostic.port:               9999                             
+    is.jmx.port:                      5559                             
+    is.memory.init:                   ${}
+    is.memory.max:                    ${}
+    is.install.service:               false
+    is.instance.packages:             WmDeployer,WmNUMDeployer,WmBrokerDeployer,WmAgileAppsDeployer,WmCloudStreamsDeployer
+    is.administrator.password:        ${}
+
+layers:
+  runtime:
+    productRepo: ${repo.product}            # install products from
+    fixRepo:     ${repo.fix}                # install fixes from
+    templates:   
+      - abe
+      - designer
+      - deployer
+
+templates:
+  abe:
+    fixes: ${abe.fixes}
+    products:
+      CLI:
+      acdl:
+  designer:
+    licenses: 
+      "Designer/WmTestSuiteLicense.xml": ${designer.testsuite.license.key.alias}
+    fixes: ${designer.fixes}
+    products:
+      LDev: # Service Development
+      vcs:  # Local version control
+      GWMDes: # Unit Test Framework
+  deployer:
+    licenses:
+      "IntegrationServer/config/licenseKey.xml": ${is.license.key.alias} 
+    fixes: ${is.fixes}
+    products:
+      Deployer:
+      integrationServer:
+        ${is.instance.name}:
+          primary.port:     ${is.primary.port}
+          diagnostic.port:  ${is.diagnostic.port}
+          jmx.port:         ${is.jmx.port}
+          package.list:     ${is.instance.packages}
+          license.file:     IntegrationServer/config/licenseKey.xml
+          configuration:
+            OSGI-IS_${is.instance.name}:
+              COMMON-MEMORY:
+                COMMON-MEMORY:
+                  InitSize: ${is.memory.init}
+                  MaxSize:  ${is.memory.max}
+            integrationServer-${is.instance.name}:
+              COMMON-LOCAL-USERS:
+                COMMON-LOCAL-USERS-Administrator:
+                  '@id': Administrator
+                  Password: ${is.administrator.password}
+                  Enabled: 'true'
+                  ExtendedProperties:
+                    Property:
+                    - '@name': AllowDigestAuthentication
+                      $: 'false'
+    
+provision:
+  default:
+    runtime: ${nodes}
+
+nodes:
+  default:
+    default:
+      port:   ${spm.port}
+      secure: ${spm.secure}
+      credentials: ${spm.credentials.alias}
+      bootstrapInfo:
+        installDir:   ${bootstrap.install.dir}
+        installer:    ${bootstrap.install.installer}
+        port:         ${bootstrap.ssh.port}
+        credentials:  ${bootstrap.credentials.alias}
